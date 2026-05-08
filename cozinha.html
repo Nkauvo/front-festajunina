@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Cozinha • Barraca do Mimi</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap"
+  >
+
+  <script>
+
+    tailwind.config = {
+
+      theme: {
+
+        extend: {
+
+          colors: {
+
+            principal: '#ff7a00',
+
+            fundo: '#fff8e7',
+
+            card: '#ffffff'
+
+          },
+
+          fontFamily: {
+
+            barlow: ['Barlow', 'sans-serif']
+
+          }
+
+        }
+
+      }
+
+    }
+
+  </script>
+
+</head>
+
+<body class="bg-fundo font-barlow min-h-screen text-gray-800">
+
+  <!-- HEADER -->
+
+  <header class="w-full bg-white shadow-sm border-b border-orange-100">
+
+    <div class="max-w-7xl mx-auto px-6 py-6">
+
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+        <!-- TÍTULO -->
+
+        <div>
+
+          <h1 class="text-4xl lg:text-5xl font-black text-principal">
+
+            COZINHA 🔥
+
+          </h1>
+
+          <p class="text-gray-500 font-semibold mt-2">
+
+            Painel de pedidos em tempo real
+
+          </p>
+
+        </div>
+
+        <!-- STATUS -->
+
+        <div class="bg-fundo border border-orange-200 rounded-3xl px-6 py-4 shadow-sm">
+
+          <p class="text-gray-600 font-bold">
+
+            Pedidos ativos
+
+          </p>
+
+          <h2
+            id="total-pedidos"
+            class="text-4xl font-black text-principal mt-1"
+          >
+
+            0
+
+          </h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- CONTEÚDO -->
+
+  <main class="max-w-7xl mx-auto px-6 py-10">
+
+    <!-- GRID PEDIDOS -->
+
+    <section
+      id="pedidos-container"
+      class="grid md:grid-cols-2 xl:grid-cols-3 gap-8"
+    >
+
+      <!-- LOADING -->
+
+      <div class="bg-card rounded-3xl p-10 shadow-xl col-span-full">
+
+        <div class="flex flex-col items-center justify-center">
+
+          <div class="w-12 h-12 border-4 border-orange-200 border-t-principal rounded-full animate-spin"></div>
+
+          <p class="mt-5 text-lg font-bold text-gray-500">
+
+            Carregando pedidos...
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+
+    // URL DO BACKEND
+
+    const API_URL = 'https://backend-junina.vercel.app'
+
+    // ELEMENTOS
+
+    const pedidosContainer =
+      document.getElementById('pedidos-container')
+
+    const totalPedidos =
+      document.getElementById('total-pedidos')
+
+    // CARREGAR PEDIDOS
+
+    async function carregarPedidos() {
+
+      try {
+
+        const response =
+          await fetch(`${API_URL}/pedidos`)
+
+        const pedidos =
+          await response.json()
+
+        totalPedidos.innerText =
+          pedidos.length
+
+        pedidosContainer.innerHTML = ''
+
+        // SEM PEDIDOS
+
+        if (pedidos.length === 0) {
+
+          pedidosContainer.innerHTML = `
+
+            <div class="bg-white rounded-3xl p-12 shadow-xl col-span-full text-center">
+
+              <h2 class="text-3xl font-black text-principal">
+
+                Nenhum pedido 🍿
+
+              </h2>
+
+              <p class="text-gray-500 font-semibold mt-3">
+
+                Os novos pedidos aparecerão aqui automaticamente.
+
+              </p>
+
+            </div>
+
+          `
+
+          return
+
+        }
+
+        // LOOP DOS PEDIDOS
+
+        pedidos.forEach(pedido => {
+
+          let itensHTML = ''
+
+          let total = 0
+
+          // LOOP DOS ITENS
+
+          pedido.itens.forEach(item => {
+
+            const subtotal =
+              item.preco * item.qtd
+
+            total += subtotal
+
+            itensHTML += `
+
+              <div class="flex items-center justify-between py-3 border-b border-dashed">
+
+                <div>
+
+                  <h3 class="font-black text-lg">
+
+                    ${item.nome}
+
+                  </h3>
+
+                  <p class="text-sm text-gray-500 font-medium">
+
+                    Quantidade: ${item.qtd}
+
+                  </p>
+
+                </div>
+
+                <p class="font-black text-principal text-lg">
+
+                  R$ ${subtotal.toFixed(2)}
+
+                </p>
+
+              </div>
+
+            `
+
+          })
+
+          // CARD
+
+          pedidosContainer.innerHTML += `
+
+            <article class="bg-white rounded-[30px] p-7 shadow-2xl border-l-[12px] border-principal">
+
+              <!-- TOPO -->
+
+              <div class="flex items-start justify-between mb-6">
+
+                <div>
+
+                  <h2 class="text-3xl font-black">
+
+                    Pedido #${pedido.id}
+
+                  </h2>
+
+                  <p class="text-gray-500 font-semibold mt-1">
+
+                    Cliente: ${pedido.cliente}
+
+                  </p>
+
+                </div>
+
+                <span class="bg-orange-100 text-principal font-black px-4 py-2 rounded-full uppercase text-sm">
+
+                  ${pedido.status}
+
+                </span>
+
+              </div>
+
+              <!-- ITENS -->
+
+              <div class="space-y-2">
+
+                ${itensHTML}
+
+              </div>
+
+              <!-- TOTAL -->
+
+              <div class="flex items-center justify-between mt-8 pt-5 border-t">
+
+                <p class="text-gray-500 font-bold text-lg">
+
+                  Total
+
+                </p>
+
+                <h3 class="text-3xl font-black text-principal">
+
+                  R$ ${total.toFixed(2)}
+
+                </h3>
+
+              </div>
+
+              <!-- BOTÃO -->
+
+              <button
+                onclick="finalizarPedido(${pedido.id})"
+                class="w-full mt-7 bg-principal hover:brightness-110 transition-all text-white py-4 rounded-2xl font-black text-lg shadow-lg"
+              >
+
+                FINALIZAR PEDIDO
+
+              </button>
+
+            </article>
+
+          `
+
+        })
+
+      } catch (err) {
+
+        console.error(err)
+
+        pedidosContainer.innerHTML = `
+
+          <div class="bg-red-100 border border-red-300 rounded-3xl p-10 col-span-full text-center">
+
+            <h2 class="text-3xl font-black text-red-500">
+
+              Erro ao carregar pedidos
+
+            </h2>
+
+            <p class="text-red-400 font-semibold mt-3">
+
+              Verifique o backend ou a conexão.
+
+            </p>
+
+          </div>
+
+        `
+
+      }
+
+    }
+
+    // FINALIZAR PEDIDO
+
+    async function finalizarPedido(id) {
+
+      try {
+
+        alert(`Pedido #${id} finalizado 🔥`)
+
+      } catch (err) {
+
+        console.error(err)
+
+      }
+        
+    }
+
+    // INICIAR
+
+    carregarPedidos()
+
+    // ATUALIZA AUTOMÁTICO
+
+    setInterval(carregarPedidos, 5000)
+
+  </script>
+
+</body>
+</html>

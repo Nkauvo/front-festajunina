@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Barraca do Mimi - Festa Junina</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap">
+
+<script>
+
+tailwind.config = {
+
+theme: {
+
+extend: {
+
+colors: {
+
+principal: '#ff7a00',
+
+cinza: '#666666',
+
+'fundo-footer': '#ffd54f',
+
+},
+
+fontFamily: {
+
+barlow: ['Barlow', 'sans-serif']
+
+},
+
+keyframes: {
+
+flutuar: {
+
+'0%, 100%': {
+transform: 'translateY(0px)'
+},
+
+'50%': {
+transform: 'translateY(-30px)'
+}
+
+}
+
+},
+
+animation: {
+
+flutuar: 'flutuar 4s ease-in-out infinite'
+
+}
+
+}
+
+}
+
+}
+
+</script>
+
+<style>
+
+.slogan-header {
+
+opacity: 0;
+
+transform: translateX(-20px);
+
+max-width: 0;
+
+overflow: hidden;
+
+transition: all 0.5s ease-in-out;
+
+white-space: nowrap;
+
+}
+
+.logo-wrapper:hover .slogan-header {
+
+opacity: 1;
+
+transform: translateX(0);
+
+max-width: 650px;
+
+}
+
+.hamburger {
+
+width: 30px;
+
+height: 24px;
+
+position: relative;
+
+cursor: pointer;
+
+z-index: 100;
+
+}
+
+.hamburger span {
+
+display: block;
+
+width: 100%;
+
+height: 3px;
+
+background-color: #333;
+
+border-radius: 3px;
+
+position: absolute;
+
+transition: all 0.4s ease-in-out;
+
+transform-origin: center;
+
+}
+
+.hamburger span:nth-child(1) {
+top: 0;
+}
+
+.hamburger span:nth-child(2) {
+top: 10px;
+}
+
+.hamburger span:nth-child(3) {
+top: 20px;
+}
+
+.hamburger.active span:nth-child(1) {
+
+top: 10px;
+
+transform: rotate(45deg);
+
+}
+
+.hamburger.active span:nth-child(2) {
+
+opacity: 0;
+
+transform: translateX(-20px);
+
+}
+
+.hamburger.active span:nth-child(3) {
+
+top: 10px;
+
+transform: rotate(-45deg);
+
+}
+
+@media (max-width: 1023px) {
+
+.nav-menu {
+
+position: fixed;
+
+right: -100%;
+
+top: 0;
+
+width: 75%;
+
+height: 100vh;
+
+background-color: white;
+
+display: flex;
+
+flex-direction: column;
+
+justify-content: center;
+
+gap: 2rem;
+
+transition: 0.4s ease;
+
+z-index: 50;
+
+box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+
+}
+
+.nav-menu.active {
+
+right: 0;
+
+}
+
+#overlay {
+
+display: none;
+
+position: fixed;
+
+inset: 0;
+
+background: rgba(0,0,0,0.4);
+
+z-index: 40;
+
+}
+
+#overlay.active {
+
+display: block;
+
+}
+
+#swipe-outer-container {
+
+overflow: hidden;
+
+width: 100%;
+
+}
+
+#swipe-container {
+
+display: flex;
+
+transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+
+}
+
+.category-panel {
+
+flex: 0 0 100%;
+
+min-width: 100%;
+
+padding: 0 20px;
+
+box-sizing: border-box;
+
+}
+
+}
+
+.menu-item {
+
+transition: background-color 0.2s;
+
+-webkit-tap-highlight-color: transparent;
+
+}
+
+#detalhes-modal {
+
+transition: opacity 0.3s ease;
+
+}
+
+#detalhes-modal-content {
+
+transition: transform 0.3s ease;
+
+}
+
+</style>
+
+</head>
+
+<body class="font-barlow text-[#222222] bg-[#fff8e7] overflow-x-hidden">
+
+<div id="overlay"></div>
+
+<div id="cart-btn"
+class="fixed bottom-6 left-6 z-[100] bg-principal text-white p-4 rounded-full shadow-2xl cursor-pointer flex items-center gap-2 transition-transform hover:scale-110 hidden">
+
+<i class="fa-solid fa-cart-shopping text-xl"></i>
+
+<span id="cart-count"
+class="font-bold text-lg">0</span>
+
+</div>
+
+<a href="#"
+class="fixed right-4 bottom-4 z-[100] hover:scale-110 transition-transform">
+
+<img
+src="./assets/images/whatsapp.png"
+class="h-14 w-auto drop-shadow-lg">
+
+</a>
+
+<header class="sticky top-0 z-[60] bg-white px-4 py-4 lg:px-8 lg:shadow-sm">
+
+<div class="lg:max-w-[1200px] lg:mx-auto flex justify-between items-center">
+
+<div class="logo-wrapper flex items-center gap-4 cursor-default">
+
+<img
+src="./assets/images/logo.png"
+class="w-32 lg:w-[140px]">
+
+<span class="slogan-header hidden lg:block font-semibold text-principal text-sm italic">
+
+O melhor sabor da Festa Junina 🌽🔥
+
+</span>
+
+</div>
+
+<button class="hamburger lg:hidden"
+id="hamburger-btn">
+
+<span></span>
+<span></span>
+<span></span>
+
+</button>
+
+<nav class="nav-menu lg:block">
+
+<ul class="flex flex-col lg:flex-row list-none font-bold text-center gap-6 lg:gap-0">
+
+<li>
+
+<a href="#cardapio"
+class="nav-link block text-xl lg:text-base hover:text-principal lg:ml-8">
+
+CARDÁPIO
+
+</a>
+
+</li>
+
+<li>
+
+<button id="cart-menu-link"
+class="nav-link block w-full text-xl lg:text-base hover:text-principal lg:ml-8 uppercase">
+
+CARRINHO
+
+</button>
+
+</li>
+
+</ul>
+
+</nav>
+
+</div>
+
+</header>
+
+<main>
+
+<section class="flex flex-col items-center text-center px-4 py-12 lg:flex-row lg:justify-between lg:max-w-[1200px] lg:mx-auto lg:py-20">
+
+<div class="lg:w-1/2 lg:text-left">
+
+<h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-6">
+
+As comidas juninas que você
+<span class="text-principal italic">
+sempre sonhou.
+</span>
+
+</h1>
+
+<p class="text-xl text-cinza mb-8">
+
+Milho, canjica, espetinhos e muito mais 🔥
+
+</p>
+
+<a href="#cardapio"
+class="border-2 border-[#333] rounded-xl py-3 px-10 font-bold uppercase hover:bg-[#333] hover:text-white transition-all shadow-lg inline-block">
+
+Ver Cardápio
+
+</a>
+
+</div>
+
+<div class="lg:w-1/2 flex justify-center mt-12 lg:mt-0">
+
+<img
+src="./assets/images/comidas.png"
+class="w-full max-w-[320px] lg:max-w-[550px] animate-flutuar">
+
+</div>
+
+</section>
+
+<section id="cardapio"
+class="px-4 py-10 lg:max-w-[1100px] lg:mx-auto">
+
+<h2 class="text-center text-3xl font-bold mb-10">
+
+Nosso Cardápio
+
+</h2>
+
+<div id="swipe-outer-container">
+
+<div id="swipe-container"
+class="lg:grid lg:grid-cols-2 lg:gap-12">
+
+<!-- COMIDAS TÍPICAS -->
+<div class="category-panel">
+
+  <h3 class="text-principal text-xl font-bold border-b-2 border-gray-100 pb-2 mb-4">
+    Comidas Típicas
+  </h3>
+
+  <!-- MILHO -->
+  <div
+    class="menu-item flex items-center gap-4 py-4 border-b border-dashed cursor-pointer hover:bg-orange-50 transition"
+    onclick="abrirModalDetalhes(
+      'Milho Verde',
+      7,
+      'Milho cozido com manteiga',
+      './assets/images/milho.png'
+    )"
+  >
+
+    <img
+      src="./assets/images/milho.png"
+      class="w-16 h-16 object-cover rounded-xl flex-shrink-0 shadow-sm"
+    >
+
+    <div class="flex-1">
+
+      <p class="font-bold">
+        Milho Verde
+      </p>
+
+      <p class="text-sm text-cinza">
+        Milho cozido com manteiga
+      </p>
+
+    </div>
+
+    <div class="text-principal font-bold text-lg">
+      R$ 7,00
+    </div>
+
+  </div>
+
+
+  <!-- CANJICA -->
+  <div
+    class="menu-item flex items-center gap-4 py-4 border-b border-dashed cursor-pointer hover:bg-orange-50 transition"
+    onclick="abrirModalDetalhes(
+      'Canjica',
+      6,
+      'Canjica cremosa tradicional',
+      './assets/images/canjica.png'
+    )"
+  >
+
+    <img
+      src="./assets/images/canjica.png"
+      class="w-16 h-16 object-cover rounded-xl flex-shrink-0 shadow-sm"
+    >
+
+    <div class="flex-1">
+
+      <p class="font-bold">
+        Canjica
+      </p>
+
+      <p class="text-sm text-cinza">
+        Canjica cremosa tradicional
+      </p>
+
+    </div>
+
+    <div class="text-principal font-bold text-lg">
+      R$ 6,00
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- ESPETINHOS -->
+<div class="category-panel mt-8 lg:mt-0">
+
+  <h3 class="text-principal text-xl font-bold border-b-2 border-gray-100 pb-2 mb-4">
+    Espetinhos
+  </h3>
+
+  <!-- CHURRASCO -->
+  <div
+    class="menu-item flex items-center gap-4 py-4 border-b border-dashed cursor-pointer hover:bg-orange-50 transition"
+    onclick="abrirModalDetalhes(
+      'Churrasco',
+      10,
+      'Espetinho bovino na brasa',
+      './assets/images/churrasco.png'
+    )"
+  >
+
+    <img
+      src="./assets/images/churrasco.png"
+      class="w-16 h-16 object-cover rounded-xl flex-shrink-0 shadow-sm"
+    >
+
+    <div class="flex-1">
+
+      <p class="font-bold">
+        Churrasco
+      </p>
+
+      <p class="text-sm text-cinza">
+        Espetinho bovino na brasa
+      </p>
+
+    </div>
+
+    <div class="text-principal font-bold text-lg">
+      R$ 10,00
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer class="bg-fundo-footer text-center py-12 mt-20">
+
+<h3 class="font-bold text-white text-2xl mb-2">
+
+Barraca do Mimi
+
+</h3>
+
+<p class="text-[#333] text-sm">
+
+© 2026 - As melhores comidas da Festa Junina.
+
+</p>
+
+</footer>
+
+<script>
+
+const btn = document.getElementById('hamburger-btn')
+
+const nav = document.querySelector('.nav-menu')
+
+const overlay = document.getElementById('overlay')
+
+const links = document.querySelectorAll('.nav-link')
+
+const toggleMenu = () => {
+
+btn.classList.toggle('active')
+
+nav.classList.toggle('active')
+
+overlay.classList.toggle('active')
+
+document.body.style.overflow =
+nav.classList.contains('active')
+? 'hidden'
+: 'auto'
+
+}
+
+btn.addEventListener('click', toggleMenu)
+
+overlay.addEventListener('click', toggleMenu)
+
+links.forEach(l =>
+l.addEventListener('click', toggleMenu)
+)
+
+</script>
+
+<script>
+
+function abrirModalDetalhes(nome, preco, descricao, imagem){
+
+  alert(
+`Produto: ${nome}
+
+Preço: R$ ${preco}
+
+Descrição:
+${descricao}`
+  )
+
+}
+
+</script>
+
+<!-- COLE ISSO ANTES DO </body> -->
+
+<!-- MODAL -->
+<div
+  id="modal-produto"
+  class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4"
+>
+
+  <div class="bg-white rounded-3xl w-full max-w-md p-6 relative">
+
+    <!-- FECHAR -->
+    <button
+      onclick="fecharModal()"
+      class="absolute top-4 right-4 text-2xl font-bold"
+    >
+      ×
+    </button>
+
+    <!-- IMAGEM -->
+    <img
+      id="modal-img"
+      src=""
+      class="w-40 h-40 object-cover mx-auto mb-4 rounded-2xl"
+    >
+
+    <!-- NOME -->
+    <h2
+      id="modal-nome"
+      class="text-3xl font-bold text-center mb-2"
+    >
+    </h2>
+
+    <!-- DESCRIÇÃO -->
+    <p
+      id="modal-desc"
+      class="text-center text-gray-500 mb-4"
+    >
+    </p>
+
+    <!-- PREÇO -->
+    <p
+      id="modal-preco"
+      class="text-center text-2xl font-bold text-orange-500 mb-6"
+    >
+    </p>
+
+    <!-- BOTÃO -->
+    <button
+      onclick="adicionarCarrinho()"
+      class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold hover:opacity-90 transition"
+    >
+      Adicionar ao Carrinho
+    </button>
+
+  </div>
+
+</div>
+
+
+<<!-- SUBSTITUA O CARRINHO ANTIGO POR ESSE -->
+
+<!-- BOTÃO CARRINHO -->
+<div
+  id="carrinho"
+  onclick="abrirCarrinho()"
+  class="fixed bottom-6 left-6 bg-orange-500 text-white px-6 py-4 rounded-full shadow-2xl hidden z-50 cursor-pointer flex items-center gap-2"
+>
+
+  <i class="fa-solid fa-cart-shopping"></i>
+
+  <span id="cart-count">0</span>
+
+</div>
+
+
+
+<!-- MODAL CARRINHO -->
+<div
+  id="modal-carrinho"
+  class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4"
+>
+
+  <div class="bg-white rounded-3xl w-full max-w-lg p-6 relative">
+
+    <!-- FECHAR -->
+    <button
+      onclick="fecharCarrinho()"
+      class="absolute top-4 right-4 text-2xl font-bold"
+    >
+      ×
+    </button>
+
+    <!-- TÍTULO -->
+    <h2 class="text-3xl font-bold mb-6">
+
+      Seu Pedido 🛒
+
+    </h2>
+
+    <!-- ITENS -->
+    <div
+      id="cart-items"
+      class="space-y-4 max-h-[300px] overflow-y-auto"
+    >
+    </div>
+
+    <!-- TOTAL -->
+    <div class="border-t mt-6 pt-4 flex justify-between text-xl font-bold">
+
+      <span>Total:</span>
+
+      <span id="cart-total">
+        R$ 0
+      </span>
+
+    </div>
+
+    <!-- NOME -->
+    <input
+      id="cliente"
+      type="text"
+      placeholder="Seu nome"
+      class="w-full mt-6 border rounded-2xl p-4 outline-none"
+    >
+
+    <!-- FINALIZAR -->
+    <button
+      onclick="finalizarPedido()"
+      class="w-full mt-4 bg-orange-500 text-white py-4 rounded-2xl font-bold"
+    >
+      Finalizar Pedido
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+let produtoAtual = null
+
+let carrinho = []
+
+const API_URL =
+'https://backend-junina.vercel.app/'
+
+function abrirModalDetalhes(nome, preco, descricao, imagem){
+
+  produtoAtual = {
+    nome,
+    preco,
+    descricao,
+    imagem
+  }
+
+  document.getElementById('modal-nome').innerText = nome
+
+  document.getElementById('modal-desc').innerText = descricao
+
+  document.getElementById('modal-preco').innerText =
+  `R$ ${preco}`
+
+  document.getElementById('modal-img').src = imagem
+
+  const modal =
+  document.getElementById('modal-produto')
+
+  modal.classList.remove('hidden')
+
+  modal.classList.add('flex')
+
+}
+
+function fecharModal(){
+
+  const modal =
+  document.getElementById('modal-produto')
+
+  modal.classList.add('hidden')
+
+  modal.classList.remove('flex')
+
+}
+
+function adicionarCarrinho(){
+
+  carrinho.push(produtoAtual)
+
+  atualizarCarrinho()
+
+  fecharModal()
+
+}
+
+function atualizarCarrinho(){
+
+  const cart =
+  document.getElementById('carrinho')
+
+  const count =
+  document.getElementById('cart-count')
+
+  cart.classList.remove('hidden')
+
+  count.innerText = carrinho.length
+
+}
+
+function abrirCarrinho(){
+
+  const modal =
+  document.getElementById('modal-carrinho')
+
+  modal.classList.remove('hidden')
+
+  modal.classList.add('flex')
+
+  renderizarCarrinho()
+
+}
+
+function fecharCarrinho(){
+
+  const modal =
+  document.getElementById('modal-carrinho')
+
+  modal.classList.add('hidden')
+
+  modal.classList.remove('flex')
+
+}
+
+function renderizarCarrinho(){
+
+  const div =
+  document.getElementById('cart-items')
+
+  const totalDiv =
+  document.getElementById('cart-total')
+
+  div.innerHTML = ''
+
+  let total = 0
+
+  carrinho.forEach(item => {
+
+    total += item.preco
+
+    div.innerHTML += `
+
+      <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+
+        <div>
+
+          <p class="font-bold">
+            ${item.nome}
+          </p>
+
+          <p class="text-sm text-gray-500">
+            R$ ${item.preco}
+          </p>
+
+        </div>
+
+      </div>
+
+    `
+
+  })
+
+  totalDiv.innerText =
+  `R$ ${total}`
+
+}
+
+async function finalizarPedido(){
+
+  const cliente =
+  document.getElementById('cliente').value
+
+  if(!cliente){
+
+    alert('Digite seu nome')
+
+    return
+
+  }
+
+  if(carrinho.length === 0){
+
+    alert('Carrinho vazio')
+
+    return
+
+  }
+
+  const total =
+  carrinho.reduce((acc, item) =>
+  acc + item.preco, 0)
+
+  const pedido = {
+
+    cliente,
+
+    itens: carrinho,
+
+    total
+
+  }
+
+  try {
+
+    const response = await fetch(
+      `${API_URL}/pedidos`,
+      {
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify(pedido)
+      }
+    )
+
+    if(response.ok){
+
+      alert('Pedido enviado com sucesso 🔥')
+
+      carrinho = []
+
+      atualizarCarrinho()
+
+      fecharCarrinho()
+
+      document.getElementById('cart-items').innerHTML = ''
+
+      document.getElementById('cart-total').innerText = 'R$ 0'
+
+      document.getElementById('cliente').value = ''
+
+    } else {
+
+      alert('Erro ao enviar pedido')
+
+    }
+
+  } catch(err){
+
+    alert('Erro no servidor')
+
+    console.log(err)
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

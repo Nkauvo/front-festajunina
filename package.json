@@ -1,0 +1,11 @@
+{
+  "name": "barraca-do-mimi",
+  "version": "1.0.0",
+  "description": "Sistema Festa Junina",
+  "main": "index.js",
+  "scripts": {
+    "start": "live-server"
+  },
+  "author": "Gabriel",
+  "license": "ISC"
+}
